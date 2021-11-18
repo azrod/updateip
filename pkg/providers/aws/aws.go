@@ -128,6 +128,7 @@ func (d *Paws) GetRecord() (record string, err error) {
 func (d *Paws) GetChangeStatus() (terminated bool, err error) {
 
 	if rec.LastChangeID != "" {
+
 		input := &route53.GetChangeInput{
 			Id: aws.String(rec.LastChangeID), // Required
 		}
@@ -141,6 +142,9 @@ func (d *Paws) GetChangeStatus() (terminated bool, err error) {
 			d.Events <- "Update Record : Done"
 			rec.LastChangeID = ""
 			return true, nil
+		} else if *resp.ChangeInfo.Status == "PENDING" {
+			d.Events <- "Update Record : Pending"
+			return false, nil
 		} else {
 			return false, nil
 		}
