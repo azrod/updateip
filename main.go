@@ -57,7 +57,7 @@ func main() {
 
 	}
 
-	if c.AWSAccount.Enable {
+	if c.OVHAccount.Enable {
 
 		Povh := uip_ovh.Povh{
 			Record: c.OVHAccount.Record,
@@ -65,11 +65,11 @@ func main() {
 		}
 
 		if err := Povh.NewClient(); err != nil {
-			log.Fatal().Err(err).Msg("Failed to setup AWS client")
+			log.Fatal().Err(err).Msg("Failed to setup OVH client")
 		}
 
 		if err := Povh.Run(); err != nil {
-			log.Error().Err(err).Msg("Error on module AWS")
+			log.Error().Err(err).Msg("Error on module OVH")
 		}
 
 	}

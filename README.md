@@ -2,7 +2,7 @@
 
 UpdateIP is a automatic update of a DNS record based on the External IP address
 
-## How to setup 
+## How to setup
 
 > Shortly
 
@@ -25,6 +25,18 @@ aws_account:
     name: "subdomain.domain.com"
     ttl: 60
     domain: "domain.com"
+
+ovh_account:
+  enable: true
+  secret:
+    application_key: "xxx"
+    application_secret: "xxx"
+    consumer_key: "xxx"
+    region: "eu-west-1"
+  record:
+    name: "subdomain.domain.com"
+    ttl: 60
+    zone: "domain.com"
 ```
 
 
