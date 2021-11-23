@@ -37,7 +37,14 @@ ovh_account:
     name: "subdomain.domain.com"
     ttl: 60
     zone: "domain.com"
+
+cloudflare_account:
+  enable: true
+  secret:
+    api_key: "xxx"
+    email: "xxx"
+  record:
+    name: "subdomain.domain.com"
+    ttl: 60
+    domain: "domain.com"
 ```
-
-
-		

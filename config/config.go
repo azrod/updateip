@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	uip_aws "github.com/azrod/updateip/pkg/providers/aws"
+	uip_cloudflare "github.com/azrod/updateip/pkg/providers/cloudflare"
 	uip_ovh "github.com/azrod/updateip/pkg/providers/ovh"
 
 	"gopkg.in/yaml.v2"
@@ -42,6 +43,11 @@ type CFG struct {
 		Secret uip_ovh.PovhSecret `yaml:"secret"`
 		Record uip_ovh.PovhRecord `yaml:"record"`
 	} `yaml:"ovh_account"`
+	CLOUDFLAREAccount struct {
+		Enable bool                             `yaml:"enable"`
+		Secret uip_cloudflare.PCloudflareSecret `yaml:"secret"`
+		Record uip_cloudflare.PCloudflareRecord `yaml:"record"`
+	} `yaml:"cloudflare_account"`
 }
 
 // LoadConfig reads configuration from file or environment variables.
