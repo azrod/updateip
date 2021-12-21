@@ -9,7 +9,7 @@ platforms="linux/arm64 linux/amd64 linux/arm/v6 linux/arm/v7 darwin/amd64"
 
 binary="updateip"
 
-golang_version=$(curl -s "https://golang.org/VERSION?m=text" | sed -e 's/go//' | cut -f1,2 -d.)
+golang_version=$(curl -s "https://go.dev/VERSION?m=text" | sed -e 's/go//' | cut -f1,2 -d.)
 
 #Setting up some colors for helping read the demo output
 bold=$(tput bold)
