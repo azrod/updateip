@@ -4,7 +4,34 @@ UpdateIP is a automatic update of a DNS record based on the External IP address
 
 ## How to setup
 
-> Shortly
+### **From Docker Run**
+
+```bash
+docker run -itd -v "./config.yaml:config.yaml" ghcr.io/azrod/updateip:latest
+```
+
+### **From Docker Compose**
+
+```bash
+version: '3.8'
+
+services:
+  updateip:
+    container_name: updateaip
+    image: ghcr.io/azrod/updateip:latest
+    volumes:
+      - ./config.yaml:config.yaml:ro
+
+```
+
+### **From Source**
+
+```bash
+go mod tidy 
+go build
+
+./updateip
+```
 
 # How to config
 
