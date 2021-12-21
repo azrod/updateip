@@ -74,6 +74,23 @@ func main() {
 
 	}
 
+	if c.OVHAccount.Enable {
+
+		Povh := uip_ovh.Povh{
+			Record: c.OVHAccount.Record,
+			Secret: c.OVHAccount.Secret,
+		}
+
+		if err := Povh.NewClient(); err != nil {
+			log.Fatal().Err(err).Msg("Failed to setup OVH client")
+		}
+
+		if err := Povh.Run(); err != nil {
+			log.Error().Err(err).Msg("Error on module OVH")
+		}
+
+	}
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
