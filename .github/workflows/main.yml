@@ -1,0 +1,38 @@
+---
+name: build OCI image
+
+on:
+  push:
+    branches:
+      - "*"
+      - "**"
+      - "!dependabot/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set image tag
+        run: |
+          if [[ $GITHUB_REF == 'refs/heads/master' || $GITHUB_REF == 'refs/heads/main' ]]; then
+            TAG="1.0.${GITHUB_RUN_NUMBER}"
+          else
+            TAG="dev"
+          fi
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+      # - name: GitGuardian scan
+      #   uses: GitGuardian/gg-shield-action@master
+      #   env:
+      #     GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+      #     GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+      #     GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      #     GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      #     GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+      - name: create and push an image
+        run: >
+          buildah unshare bash ./build.sh
+          ${{ env.TAG }}
+          ${{ secrets.REGISTRY_USERNAME }}
+          ${{ secrets.REGISTRY_PASSWORD }}
