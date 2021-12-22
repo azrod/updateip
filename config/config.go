@@ -62,11 +62,15 @@ func LoadConfig() (config CFG, err error) {
 	file := os.Getenv("PATH_CONFIG_FILE")
 
 	if dir == "" {
-		dir = "/updateip"
+		dir = "/config"
+	} else {
+		log.Info().Msgf("Using config directory: %s", dir)
 	}
 
 	if file == "" {
 		file = "config.yaml"
+	} else {
+		log.Info().Msgf("Using config file: %s", file)
 	}
 
 	// open yaml file

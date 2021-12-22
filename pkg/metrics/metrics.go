@@ -56,11 +56,11 @@ func (m *Metrics) registerMetrics() {
 func (m *Metrics) RegisterPkg(rg map[string][]interface{}) {
 
 	for _, v := range rg["gauge"] {
-		m.registry.MustRegister(v.(*prometheus.GaugeVec))
+		m.registry.MustRegister(v.(prometheus.Gauge))
 	}
 
 	for _, v := range rg["counter"] {
-		m.registry.MustRegister(v.(*prometheus.CounterVec))
+		m.registry.MustRegister(v.(prometheus.Counter))
 	}
 }
 
