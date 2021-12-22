@@ -7,7 +7,7 @@ UpdateIP is a automatic update of a DNS record based on the External IP address
 ### **From Docker Run**
 
 ```bash
-docker run -itd -v "./config.yaml:config.yaml" ghcr.io/azrod/updateip:latest
+docker run -itd -v "./config.yaml:/config/config.yaml" ghcr.io/azrod/updateip:latest
 ```
 
 ### **From Docker Compose**
@@ -20,7 +20,7 @@ services:
     container_name: updateaip
     image: ghcr.io/azrod/updateip:latest
     volumes:
-      - ./config.yaml:config.yaml:ro
+      - ./config.yaml:/config/config.yaml:ro
 
 ```
 
@@ -30,7 +30,7 @@ services:
 go mod tidy 
 go build
 
-./updateip
+PATH_CONFIG_DIRECTORY=$(pwd) ./updateip
 ```
 
 # How to config
@@ -39,8 +39,14 @@ Create the **config.yaml** configuration file
 
 ```yaml
 log:
-  level: debug // Available : trace debug info warn error fatal panic
-  humanize: true
+  level: debug # Available : trace debug info warn error fatal panic
+  humanize: true # Default: false
+
+metrics:
+  enable: true # Default: false
+  port: 8080 # Default : 8080
+  host: 0.0.0.0 # Default: 0.0.0.0
+  path: /metrics # Default: /metrics
 
 aws_account:
   enable: true
