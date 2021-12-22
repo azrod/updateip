@@ -19,12 +19,11 @@ jobs:
         uses: battila7/get-version-action@v2
       - name: Set image tag
         run: |
-          if [[ ${{ steps.get_version.outputs.version }} != "" ]]; then
+          if [[ "${{ steps.get_version.outputs.version }}" != "" && "${{ steps.get_version.outputs.version }}" != "master" ]]; then
             TAG="${{ steps.get_version.outputs.version }}"
           else
             TAG="dev"
           fi
-          echo ${TAG}
           echo "TAG=${TAG}" >> $GITHUB_ENV
       # - name: GitGuardian scan
       #   uses: GitGuardian/gg-shield-action@master

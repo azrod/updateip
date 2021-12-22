@@ -7,6 +7,7 @@ import (
 	uip_aws "github.com/azrod/updateip/pkg/providers/aws"
 	uip_cloudflare "github.com/azrod/updateip/pkg/providers/cloudflare"
 	uip_ovh "github.com/azrod/updateip/pkg/providers/ovh"
+	"github.com/rs/zerolog/log"
 
 	"gopkg.in/yaml.v2"
 )
@@ -57,57 +58,197 @@ type CFG struct {
 // LoadConfig reads configuration from file or environment variables.
 func LoadConfig() (config CFG, err error) {
 
-	// open yaml file
-	f, err := os.Open("config.yaml")
+	dir := os.Getenv("PATH_CONFIG_DIRECTORY")
+	file := os.Getenv("PATH_CONFIG_FILE")
 
-	// if file not found, try to read from environment variables
-	if err != nil {
-
-		// AWS Account
-		config.AWSAccount.Secret.AccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")         //Access key ID
-		config.AWSAccount.Secret.SecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY") //Secret access key
-		config.AWSAccount.Secret.Region = os.Getenv("AWS_REGION")                     // Region
-		config.AWSAccount.Record.Name = os.Getenv("AWS_RECORD_NAME")                  // The DNS record to update
-		config.AWSAccount.Record.TTL, err = strconv.Atoi(os.Getenv("AWS_RECORD_TTL")) // TTL of the record
-		if err != nil {
-			return config, err
-		}
-		config.AWSAccount.Record.Domain = os.Getenv("AWS_RECORD_DOMAIN")               //Domain name of the record
-		config.AWSAccount.Record.HostedZoneID = os.Getenv("AWS_RECORD_HOSTED_ZONE_ID") // optional
-		config.AWSAccount.Record.Comment = os.Getenv("AWS_RECORD_COMMENT")             // optional
-
-		// OVH ACCOUNT
-		config.OVHAccount.Secret.ApplicationKey = os.Getenv("OVH_APPLICATION_KEY")       // Application key
-		config.OVHAccount.Secret.ApplicationSecret = os.Getenv("OVH_APPLICATION_SECRET") // Application secret
-		config.OVHAccount.Secret.ConsumerKey = os.Getenv("OVH_CONSUMER_KEY")             // Consumer key
-		config.OVHAccount.Record.Name = os.Getenv("OVH_RECORD_NAME")                     // The DNS record to update
-		config.OVHAccount.Record.TTL, err = strconv.Atoi(os.Getenv("OVH_RECORD_TTL"))    // TTL of the record
-		if err != nil {
-			return config, err
-		}
-		config.OVHAccount.Record.Zone = os.Getenv("OVH_RECORD_ZONE") //Zone of the record
-
-		config.Log.Level = os.Getenv("LOG_LEVEL")                               // trace, debug, info, warn, error, fatal, panic
-		config.Log.Humanize, err = strconv.ParseBool(os.Getenv("LOG_HUMANIZE")) // humanize log output
-		if err != nil {
-			return config, err
-		}
-		config.Metrics.Enable, err = strconv.ParseBool(os.Getenv("METRICS_ENABLE")) // enable metrics
-		if err != nil {
-			return config, err
-		}
-		config.Metrics.Host = os.Getenv("METRICS_HOST")                    // metrics host
-		config.Metrics.Port, err = strconv.Atoi(os.Getenv("METRICS_PORT")) // metrics port
-		if err != nil {
-			return config, err
-		}
-		config.Metrics.Prefix = os.Getenv("METRICS_PREFIX") // metrics prefix
-
-		return config, nil
+	if dir == "" {
+		dir = "/updateip"
 	}
 
-	// read yaml file
-	err = yaml.NewDecoder(f).Decode(&config)
+	if file == "" {
+		file = "config.yaml"
+	}
+
+	// open yaml file
+	f, err := os.Open(dir + "/" + file)
+	if err != nil {
+		log.Error().Err(err).Str("path", dir+"/"+file).Msg("Failed to open config file")
+	} else {
+		defer f.Close()
+
+		// read yaml file
+		err = yaml.NewDecoder(f).Decode(&config)
+		if err != nil {
+			log.Error().Err(err).Str("path", dir+"/"+file).Msg("Failed to decode config file")
+		}
+	}
+
+	// try to read from environment variables
+	if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
+		log.Info().Msg("Reading AWS_ACCESS_KEY_ID from environment variables")
+		config.AWSAccount.Secret.AccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
+	}
+
+	if os.Getenv("AWS_SECRET_ACCESS_KEY") != "" {
+		log.Info().Msg("Reading AWS_SECRET_ACCESS_KEY from environment variables")
+		config.AWSAccount.Secret.SecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	}
+
+	if os.Getenv("AWS_REGION") != "" {
+		log.Info().Msg("Reading AWS_REGION from environment variables")
+		config.AWSAccount.Secret.Region = os.Getenv("AWS_REGION")
+	}
+
+	if os.Getenv("AWS_HOSTED_ZONE_ID") != "" {
+		log.Info().Msg("Reading AWS_HOSTED_ZONE_ID from environment variables")
+		config.AWSAccount.Record.HostedZoneID = os.Getenv("AWS_HOSTED_ZONE_ID")
+	}
+
+	if os.Getenv("AWS_RECORD_NAME") != "" {
+		log.Info().Msg("Reading AWS_RECORD_NAME from environment variables")
+		config.AWSAccount.Record.Name = os.Getenv("AWS_HOSTED_ZONE_NAME")
+	}
+
+	// AWS_RECORD_TTL
+	if os.Getenv("AWS_RECORD_TTL") != "" {
+		log.Info().Msg("Reading AWS_RECORD_TTL from environment variables")
+		ttl, err := strconv.Atoi(os.Getenv("AWS_RECORD_TTL"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("AWS_RECORD_TTL")).Msg("Failed to convert AWS_RECORD_TTL to int")
+		} else {
+			config.AWSAccount.Record.TTL = ttl
+		}
+	}
+
+	// AWS_RECORD_DOMAIN
+	if os.Getenv("AWS_RECORD_DOMAIN") != "" {
+		log.Info().Msg("Reading AWS_RECORD_DOMAIN from environment variables")
+		config.AWSAccount.Record.Domain = os.Getenv("AWS_RECORD_DOMAIN")
+	}
+
+	// AWS_RECORD_COMMENT
+	if os.Getenv("AWS_RECORD_COMMENT") != "" {
+		log.Info().Msg("Reading AWS_RECORD_COMMENT from environment variables")
+		config.AWSAccount.Record.Comment = os.Getenv("AWS_RECORD_COMMENT")
+	}
+
+	// OVH_APPLICATION_KEY
+	if os.Getenv("OVH_APPLICATION_KEY") != "" {
+		log.Info().Msg("Reading OVH_APPLICATION_KEY from environment variables")
+		config.OVHAccount.Secret.ApplicationKey = os.Getenv("OVH_APPLICATION_KEY")
+	}
+
+	// OVH_APPLICATION_SECRET
+	if os.Getenv("OVH_APPLICATION_SECRET") != "" {
+		log.Info().Msg("Reading OVH_APPLICATION_SECRET from environment variables")
+		config.OVHAccount.Secret.ApplicationSecret = os.Getenv("OVH_APPLICATION_SECRET")
+	}
+
+	// OVH_CONSUMER_KEY
+	if os.Getenv("OVH_CONSUMER_KEY") != "" {
+		log.Info().Msg("Reading OVH_CONSUMER_KEY from environment variables")
+		config.OVHAccount.Secret.ConsumerKey = os.Getenv("OVH_CONSUMER_KEY")
+	}
+
+	// OVH_RECORD_NAME
+	if os.Getenv("OVH_RECORD_NAME") != "" {
+		log.Info().Msg("Reading OVH_RECORD_NAME from environment variables")
+		config.OVHAccount.Record.Name = os.Getenv("OVH_RECORD_NAME")
+	}
+
+	// OVH_RECORD_TTL
+	if os.Getenv("OVH_RECORD_TTL") != "" {
+		log.Info().Msg("Reading OVH_RECORD_TTL from environment variables")
+		ttl, err := strconv.Atoi(os.Getenv("OVH_RECORD_TTL"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("OVH_RECORD_TTL")).Msg("Failed to convert OVH_RECORD_TTL to int")
+		} else {
+			config.OVHAccount.Record.TTL = ttl
+		}
+	}
+
+	// OVH_RECORD_ZONE
+	if os.Getenv("OVH_RECORD_ZONE") != "" {
+		log.Info().Msg("Reading OVH_RECORD_ZONE from environment variables")
+		config.OVHAccount.Record.Zone = os.Getenv("OVH_RECORD_ZONE")
+	}
+
+	// CLOUDFLARE_API_KEY
+	if os.Getenv("CLOUDFLARE_API_KEY") != "" {
+		log.Info().Msg("Reading CLOUDFLARE_API_KEY from environment variables")
+		config.CLOUDFLAREAccount.Secret.APIKey = os.Getenv("CLOUDFLARE_API_KEY")
+	}
+
+	// CLOUDFLARE_EMAIL
+	if os.Getenv("CLOUDFLARE_EMAIL") != "" {
+		log.Info().Msg("Reading CLOUDFLARE_EMAIL from environment variables")
+		config.CLOUDFLAREAccount.Secret.Email = os.Getenv("CLOUDFLARE_EMAIL")
+	}
+
+	// CLOUDFLARE_RECORD_NAME
+	if os.Getenv("CLOUDFLARE_RECORD_NAME") != "" {
+		log.Info().Msg("Reading CLOUDFLARE_RECORD_NAME from environment variables")
+		config.CLOUDFLAREAccount.Record.Name = os.Getenv("CLOUDFLARE_RECORD_NAME")
+	}
+
+	// CLOUDFLARE_RECORD_TTL
+	if os.Getenv("CLOUDFLARE_RECORD_TTL") != "" {
+		log.Info().Msg("Reading CLOUDFLARE_RECORD_TTL from environment variables")
+		ttl, err := strconv.Atoi(os.Getenv("CLOUDFLARE_RECORD_TTL"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("CLOUDFLARE_RECORD_TTL")).Msg("Failed to convert CLOUDFLARE_RECORD_TTL to int")
+		} else {
+			config.CLOUDFLAREAccount.Record.TTL = ttl
+		}
+	}
+
+	// LOG_LEVEL
+	if os.Getenv("LOG_LEVEL") != "" {
+		log.Info().Msg("Reading LOG_LEVEL from environment variables")
+		config.Log.Level = os.Getenv("LOG_LEVEL")
+	}
+
+	// LOG_HUMANIZE
+	if os.Getenv("LOG_HUMANIZE") != "" {
+		log.Info().Msg("Reading LOG_HUMANIZE from environment variables")
+		// convert string to bool
+		humanize, err := strconv.ParseBool(os.Getenv("LOG_HUMANIZE"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("LOG_HUMANIZE")).Msg("Failed to convert LOG_HUMANIZE to bool")
+		} else {
+			config.Log.Humanize = humanize
+		}
+	}
+
+	// METRICS_ENABLE
+	if os.Getenv("METRICS_ENABLE") != "" {
+		log.Info().Msg("Reading METRICS_ENABLE from environment variables")
+		// convert string to bool
+		enable, err := strconv.ParseBool(os.Getenv("METRICS_ENABLE"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("METRICS_ENABLE")).Msg("Failed to convert METRICS_ENABLE to bool")
+		} else {
+			config.Metrics.Enable = enable
+		}
+	}
+
+	// METRICS_PORT
+	if os.Getenv("METRICS_PORT") != "" {
+		log.Info().Msg("Reading METRICS_PORT from environment variables")
+		port, err := strconv.Atoi(os.Getenv("METRICS_PORT"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("METRICS_PORT")).Msg("Failed to convert METRICS_PORT to int")
+		} else {
+			config.Metrics.Port = port
+		}
+	}
+
+	// METRICS_PATH
+	if os.Getenv("METRICS_PATH") != "" {
+		log.Info().Msg("Reading METRICS_PATH from environment variables")
+		config.Metrics.Path = os.Getenv("METRICS_PATH")
+	}
+
 	return config, err
 
 }
