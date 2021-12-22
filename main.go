@@ -10,8 +10,17 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/azrod/updateip/config"
+	"github.com/azrod/updateip/pkg/metrics"
 	uip_aws "github.com/azrod/updateip/pkg/providers/aws"
+	uip_cloudflare "github.com/azrod/updateip/pkg/providers/cloudflare"
 	uip_ovh "github.com/azrod/updateip/pkg/providers/ovh"
+)
+
+var (
+	m           *metrics.Metrics
+	Paws        uip_aws.Paws
+	Povh        uip_ovh.Povh
+	PCloudflare uip_cloudflare.PCloudflare
 )
 
 func main() {
@@ -42,7 +51,7 @@ func main() {
 
 	if c.AWSAccount.Enable {
 
-		Paws := uip_aws.Paws{
+		Paws = uip_aws.Paws{
 			Record: c.AWSAccount.Record,
 			Secret: c.AWSAccount.Secret,
 		}
@@ -51,15 +60,17 @@ func main() {
 			log.Fatal().Err(err).Interface("config", Paws).Msg("Failed to setup AWS client")
 		}
 
-		if err := Paws.Run(); err != nil {
-			log.Error().Err(err).Interface("config", Paws).Msg("Error on module AWS")
-		}
+		go func() {
+			if err := Paws.Run(); err != nil {
+				log.Error().Err(err).Interface("config", Paws).Msg("Error on module AWS")
+			}
+		}()
 
 	}
 
 	if c.OVHAccount.Enable {
 
-		Povh := uip_ovh.Povh{
+		Povh = uip_ovh.Povh{
 			Record: c.OVHAccount.Record,
 			Secret: c.OVHAccount.Secret,
 		}
@@ -67,28 +78,41 @@ func main() {
 		if err := Povh.NewClient(); err != nil {
 			log.Fatal().Err(err).Msg("Failed to setup OVH client")
 		}
-
-		if err := Povh.Run(); err != nil {
-			log.Error().Err(err).Msg("Error on module OVH")
-		}
+		go func() {
+			if err := Povh.Run(); err != nil {
+				log.Error().Err(err).Msg("Error on module OVH")
+			}
+		}()
 
 	}
 
-	if c.OVHAccount.Enable {
+	if c.CLOUDFLAREAccount.Enable {
 
-		Povh := uip_ovh.Povh{
-			Record: c.OVHAccount.Record,
-			Secret: c.OVHAccount.Secret,
+		PCloudflare = uip_cloudflare.PCloudflare{
+			Record: c.CLOUDFLAREAccount.Record,
+			Secret: c.CLOUDFLAREAccount.Secret,
 		}
 
-		if err := Povh.NewClient(); err != nil {
-			log.Fatal().Err(err).Msg("Failed to setup OVH client")
+		if err := PCloudflare.NewClient(); err != nil {
+			log.Fatal().Err(err).Msg("Failed to setup Cloudflare client")
 		}
 
-		if err := Povh.Run(); err != nil {
-			log.Error().Err(err).Msg("Error on module OVH")
+		go func() {
+			if err := PCloudflare.Run(); err != nil {
+				log.Error().Err(err).Msg("Error on module Cloudflare")
+			}
+		}()
+
+	}
+
+	if c.Metrics.Enable {
+		log.Info().Msg("Starting Metrics Server")
+		m = metrics.Init(c.Metrics)
+		if c.AWSAccount.Enable {
+			m.RegisterPkg(Paws.RegistryMetrics())
 		}
 
+		m.Run()
 	}
 
 	sigs := make(chan os.Signal, 1)

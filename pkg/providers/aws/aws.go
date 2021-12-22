@@ -157,6 +157,8 @@ func (d *Paws) Run() error {
 
 	log.Info().Msg("Starting AWS Route53 Module")
 
+	providerStatus.Set(1)
+
 	for {
 		select {
 		case e := <-d.Events:

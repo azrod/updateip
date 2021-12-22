@@ -11,6 +11,19 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type CFGMetrics struct {
+	// Prefix is the prefix used for all metrics.
+	Prefix string `yaml:"prefix"`
+	// Enable is a boolean that determines if metrics are enabled.
+	Enable bool `yaml:"enable"`
+	// Host is the endpoint used for the metrics server.
+	Host string `yaml:"host"`
+	// Port is the port used for the metrics server.
+	Port int `yaml:"port"`
+	// Path is the path used for the metrics server.
+	Path string `yaml:"path"`
+}
+
 type CFG struct {
 	Log struct {
 		// trace is the value used for the trace level field.
@@ -23,16 +36,7 @@ type CFG struct {
 		Level    string `yaml:"level"`
 		Humanize bool   `yaml:"humanize"`
 	}
-	Metrics struct {
-		// Prefix is the prefix used for all metrics.
-		Prefix string `yaml:"prefix"`
-		// Enable is a boolean that determines if metrics are enabled.
-		Enable bool `yaml:"enable"`
-		// Host is the endpoint used for the metrics server.
-		Host string `yaml:"host"`
-		// Port is the port used for the metrics server.
-		Port int `yaml:"port"`
-	}
+	Metrics    CFGMetrics `yaml:"metrics"`
 	AWSAccount struct {
 		Enable bool               `yaml:"enable"`
 		Secret uip_aws.PawsSecret `yaml:"secret"`
