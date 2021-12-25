@@ -28,10 +28,7 @@ func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
 	// Load config
-	c, err := config.LoadConfig()
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot load config")
-	}
+	c := config.LoadConfig()
 
 	if c.Log.Humanize {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})

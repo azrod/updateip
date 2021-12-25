@@ -56,7 +56,7 @@ type CFG struct {
 }
 
 // LoadConfig reads configuration from file or environment variables.
-func LoadConfig() (config CFG, err error) {
+func LoadConfig() (config CFG) {
 
 	dir := os.Getenv("PATH_CONFIG_DIRECTORY")
 	file := os.Getenv("PATH_CONFIG_FILE")
@@ -87,34 +87,36 @@ func LoadConfig() (config CFG, err error) {
 		}
 	}
 
+	var ok bool
+
 	// try to read from environment variables
-	if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
+	if _, ok = os.LookupEnv("AWS_ACCESS_KEY_ID"); ok {
 		log.Info().Msg("Reading AWS_ACCESS_KEY_ID from environment variables")
 		config.AWSAccount.Secret.AccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
 	}
 
-	if os.Getenv("AWS_SECRET_ACCESS_KEY") != "" {
+	if _, ok = os.LookupEnv("AWS_SECRET_ACCESS_KEY"); ok {
 		log.Info().Msg("Reading AWS_SECRET_ACCESS_KEY from environment variables")
 		config.AWSAccount.Secret.SecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
 	}
 
-	if os.Getenv("AWS_REGION") != "" {
+	if _, ok = os.LookupEnv("AWS_REGION"); ok {
 		log.Info().Msg("Reading AWS_REGION from environment variables")
 		config.AWSAccount.Secret.Region = os.Getenv("AWS_REGION")
 	}
 
-	if os.Getenv("AWS_HOSTED_ZONE_ID") != "" {
+	if _, ok = os.LookupEnv("AWS_HOSTED_ZONE_ID"); ok {
 		log.Info().Msg("Reading AWS_HOSTED_ZONE_ID from environment variables")
 		config.AWSAccount.Record.HostedZoneID = os.Getenv("AWS_HOSTED_ZONE_ID")
 	}
 
-	if os.Getenv("AWS_RECORD_NAME") != "" {
+	if _, ok = os.LookupEnv("AWS_RECORD_NAME"); ok {
 		log.Info().Msg("Reading AWS_RECORD_NAME from environment variables")
 		config.AWSAccount.Record.Name = os.Getenv("AWS_HOSTED_ZONE_NAME")
 	}
 
 	// AWS_RECORD_TTL
-	if os.Getenv("AWS_RECORD_TTL") != "" {
+	if _, ok = os.LookupEnv("AWS_RECORD_TTL"); ok {
 		log.Info().Msg("Reading AWS_RECORD_TTL from environment variables")
 		ttl, err := strconv.Atoi(os.Getenv("AWS_RECORD_TTL"))
 		if err != nil {
@@ -125,43 +127,43 @@ func LoadConfig() (config CFG, err error) {
 	}
 
 	// AWS_RECORD_DOMAIN
-	if os.Getenv("AWS_RECORD_DOMAIN") != "" {
+	if _, ok = os.LookupEnv("AWS_RECORD_DOMAIN"); ok {
 		log.Info().Msg("Reading AWS_RECORD_DOMAIN from environment variables")
 		config.AWSAccount.Record.Domain = os.Getenv("AWS_RECORD_DOMAIN")
 	}
 
 	// AWS_RECORD_COMMENT
-	if os.Getenv("AWS_RECORD_COMMENT") != "" {
+	if _, ok = os.LookupEnv("AWS_RECORD_COMMENT"); ok {
 		log.Info().Msg("Reading AWS_RECORD_COMMENT from environment variables")
 		config.AWSAccount.Record.Comment = os.Getenv("AWS_RECORD_COMMENT")
 	}
 
 	// OVH_APPLICATION_KEY
-	if os.Getenv("OVH_APPLICATION_KEY") != "" {
+	if _, ok = os.LookupEnv("OVH_APPLICATION_KEY"); ok {
 		log.Info().Msg("Reading OVH_APPLICATION_KEY from environment variables")
 		config.OVHAccount.Secret.ApplicationKey = os.Getenv("OVH_APPLICATION_KEY")
 	}
 
 	// OVH_APPLICATION_SECRET
-	if os.Getenv("OVH_APPLICATION_SECRET") != "" {
+	if _, ok = os.LookupEnv("OVH_APPLICATION_SECRET"); ok {
 		log.Info().Msg("Reading OVH_APPLICATION_SECRET from environment variables")
 		config.OVHAccount.Secret.ApplicationSecret = os.Getenv("OVH_APPLICATION_SECRET")
 	}
 
 	// OVH_CONSUMER_KEY
-	if os.Getenv("OVH_CONSUMER_KEY") != "" {
+	if _, ok = os.LookupEnv("OVH_CONSUMER_KEY"); ok {
 		log.Info().Msg("Reading OVH_CONSUMER_KEY from environment variables")
 		config.OVHAccount.Secret.ConsumerKey = os.Getenv("OVH_CONSUMER_KEY")
 	}
 
 	// OVH_RECORD_NAME
-	if os.Getenv("OVH_RECORD_NAME") != "" {
+	if _, ok = os.LookupEnv("OVH_RECORD_NAME"); ok {
 		log.Info().Msg("Reading OVH_RECORD_NAME from environment variables")
 		config.OVHAccount.Record.Name = os.Getenv("OVH_RECORD_NAME")
 	}
 
 	// OVH_RECORD_TTL
-	if os.Getenv("OVH_RECORD_TTL") != "" {
+	if _, ok = os.LookupEnv("OVH_RECORD_TTL"); ok {
 		log.Info().Msg("Reading OVH_RECORD_TTL from environment variables")
 		ttl, err := strconv.Atoi(os.Getenv("OVH_RECORD_TTL"))
 		if err != nil {
@@ -172,31 +174,31 @@ func LoadConfig() (config CFG, err error) {
 	}
 
 	// OVH_RECORD_ZONE
-	if os.Getenv("OVH_RECORD_ZONE") != "" {
+	if _, ok = os.LookupEnv("OVH_RECORD_ZONE"); ok {
 		log.Info().Msg("Reading OVH_RECORD_ZONE from environment variables")
 		config.OVHAccount.Record.Zone = os.Getenv("OVH_RECORD_ZONE")
 	}
 
 	// CLOUDFLARE_API_KEY
-	if os.Getenv("CLOUDFLARE_API_KEY") != "" {
+	if _, ok = os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_API_KEY from environment variables")
 		config.CLOUDFLAREAccount.Secret.APIKey = os.Getenv("CLOUDFLARE_API_KEY")
 	}
 
 	// CLOUDFLARE_EMAIL
-	if os.Getenv("CLOUDFLARE_EMAIL") != "" {
+	if _, ok = os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_EMAIL from environment variables")
 		config.CLOUDFLAREAccount.Secret.Email = os.Getenv("CLOUDFLARE_EMAIL")
 	}
 
 	// CLOUDFLARE_RECORD_NAME
-	if os.Getenv("CLOUDFLARE_RECORD_NAME") != "" {
+	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_NAME"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_RECORD_NAME from environment variables")
 		config.CLOUDFLAREAccount.Record.Name = os.Getenv("CLOUDFLARE_RECORD_NAME")
 	}
 
 	// CLOUDFLARE_RECORD_TTL
-	if os.Getenv("CLOUDFLARE_RECORD_TTL") != "" {
+	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_TTL"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_RECORD_TTL from environment variables")
 		ttl, err := strconv.Atoi(os.Getenv("CLOUDFLARE_RECORD_TTL"))
 		if err != nil {
@@ -207,13 +209,13 @@ func LoadConfig() (config CFG, err error) {
 	}
 
 	// LOG_LEVEL
-	if os.Getenv("LOG_LEVEL") != "" {
+	if _, ok = os.LookupEnv("LOG_LEVEL"); ok {
 		log.Info().Msg("Reading LOG_LEVEL from environment variables")
 		config.Log.Level = os.Getenv("LOG_LEVEL")
 	}
 
 	// LOG_HUMANIZE
-	if os.Getenv("LOG_HUMANIZE") != "" {
+	if _, ok = os.LookupEnv("LOG_HUMANIZE"); ok {
 		log.Info().Msg("Reading LOG_HUMANIZE from environment variables")
 		// convert string to bool
 		humanize, err := strconv.ParseBool(os.Getenv("LOG_HUMANIZE"))
@@ -225,7 +227,7 @@ func LoadConfig() (config CFG, err error) {
 	}
 
 	// METRICS_ENABLE
-	if os.Getenv("METRICS_ENABLE") != "" {
+	if _, ok = os.LookupEnv("METRICS_ENABLE"); ok {
 		log.Info().Msg("Reading METRICS_ENABLE from environment variables")
 		// convert string to bool
 		enable, err := strconv.ParseBool(os.Getenv("METRICS_ENABLE"))
@@ -237,7 +239,7 @@ func LoadConfig() (config CFG, err error) {
 	}
 
 	// METRICS_PORT
-	if os.Getenv("METRICS_PORT") != "" {
+	if _, ok = os.LookupEnv("METRICS_PORT"); ok {
 		log.Info().Msg("Reading METRICS_PORT from environment variables")
 		port, err := strconv.Atoi(os.Getenv("METRICS_PORT"))
 		if err != nil {
@@ -248,11 +250,11 @@ func LoadConfig() (config CFG, err error) {
 	}
 
 	// METRICS_PATH
-	if os.Getenv("METRICS_PATH") != "" {
+	if _, ok = os.LookupEnv("METRICS_PATH"); ok {
 		log.Info().Msg("Reading METRICS_PATH from environment variables")
 		config.Metrics.Path = os.Getenv("METRICS_PATH")
 	}
 
-	return config, err
+	return config
 
 }
