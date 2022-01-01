@@ -62,6 +62,10 @@ func (m *Metrics) RegisterPkg(rg map[string][]interface{}) {
 	for _, v := range rg["counter"] {
 		m.registry.MustRegister(v.(prometheus.Counter))
 	}
+
+	for _, v := range rg["gaugeVec"] {
+		m.registry.MustRegister(v.(*prometheus.HistogramVec))
+	}
 }
 
 func (m *Metrics) hTTPServer() {
