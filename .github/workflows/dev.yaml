@@ -1,0 +1,25 @@
+---
+name: build on push dev
+
+on:
+  push:
+    branches:
+      - "dev"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set image tag
+        run: |
+          TAG="dev"
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+      - name: create and push an image
+        run: >
+          buildah unshare bash ./build.sh
+          ${{ env.TAG }}
+          ${{ secrets.REGISTRY_USERNAME }}
+          ${{ secrets.REGISTRY_PASSWORD }}
