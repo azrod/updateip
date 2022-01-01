@@ -36,9 +36,10 @@ func main() {
 		log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
 	}
 
-	log.Info().Msg("Starting UpdateIP")
-
 	// Parse loglevel
+	if c.Log.Level == "" {
+		c.Log.Level = "info"
+	}
 	if l, err := zerolog.ParseLevel(c.Log.Level); err != nil {
 		log.Fatal().Err(err).Msg("cannot parse log level")
 	} else {
@@ -46,11 +47,13 @@ func main() {
 		log.Info().Msgf("Log level set to %s", l.String())
 	}
 
-	if c.AWSAccount.Enable {
+	log.Info().Msg("Starting UpdateIP")
+
+	if c.Providers.AWSAccount.Enable {
 
 		Paws = uip_aws.Paws{
-			Record: c.AWSAccount.Record,
-			Secret: c.AWSAccount.Secret,
+			Record: c.Providers.AWSAccount.Record,
+			Secret: c.Providers.AWSAccount.Secret,
 		}
 
 		if err := Paws.NewClient(); err != nil {
@@ -65,11 +68,11 @@ func main() {
 
 	}
 
-	if c.OVHAccount.Enable {
+	if c.Providers.OVHAccount.Enable {
 
 		Povh = uip_ovh.Povh{
-			Record: c.OVHAccount.Record,
-			Secret: c.OVHAccount.Secret,
+			Record: c.Providers.OVHAccount.Record,
+			Secret: c.Providers.OVHAccount.Secret,
 		}
 
 		if err := Povh.NewClient(); err != nil {
@@ -83,11 +86,11 @@ func main() {
 
 	}
 
-	if c.CLOUDFLAREAccount.Enable {
+	if c.Providers.CLOUDFLAREAccount.Enable {
 
 		PCloudflare = uip_cloudflare.PCloudflare{
-			Record: c.CLOUDFLAREAccount.Record,
-			Secret: c.CLOUDFLAREAccount.Secret,
+			Record: c.Providers.CLOUDFLAREAccount.Record,
+			Secret: c.Providers.CLOUDFLAREAccount.Secret,
 		}
 
 		if err := PCloudflare.NewClient(); err != nil {
@@ -105,7 +108,7 @@ func main() {
 	if c.Metrics.Enable {
 		log.Info().Msg("Starting Metrics Server")
 		m = metrics.Init(c.Metrics)
-		if c.AWSAccount.Enable {
+		if c.Providers.AWSAccount.Enable {
 			m.RegisterPkg(Paws.RegistryMetrics())
 		}
 

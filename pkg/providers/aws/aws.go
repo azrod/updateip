@@ -24,6 +24,8 @@ var (
 )
 
 func (d *Paws) NewClient() error {
+	defer timeTrackS(time.Now(), "aws_NewClient")
+
 	var err error
 	d.clients.aws, err = session.NewSession(&aws.Config{
 		Region:      aws.String(d.Secret.Region),
@@ -44,6 +46,7 @@ func (d *Paws) NewClient() error {
 }
 
 func (d *Paws) UpdateRecord(ip net.IP) error {
+	defer timeTrackS(time.Now(), "aws_UpdateRecord")
 
 	input := &route53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &route53.ChangeBatch{
@@ -78,6 +81,7 @@ func (d *Paws) UpdateRecord(ip net.IP) error {
 }
 
 func (d *Paws) getHostedZoneID() (HostedZoneID string, err error) {
+	defer timeTrackS(time.Now(), "aws_getHostedZoneID")
 
 	listParams := &route53.ListHostedZonesByNameInput{
 		DNSName: aws.String(d.Record.Domain), // Required
@@ -102,6 +106,7 @@ func (d *Paws) getHostedZoneID() (HostedZoneID string, err error) {
 }
 
 func (d *Paws) GetRecord() (record string, err error) {
+	defer timeTrackS(time.Now(), "aws_GetRecord")
 
 	if rec.Expire.After(time.Now()) || rec.LastValue == "" {
 
@@ -126,6 +131,7 @@ func (d *Paws) GetRecord() (record string, err error) {
 
 // get change status route53
 func (d *Paws) GetChangeStatus() (terminated bool, err error) {
+	defer timeTrackS(time.Now(), "aws_GetChangeStatus")
 
 	if rec.LastChangeID != "" {
 
@@ -181,6 +187,7 @@ func (d *Paws) Run() error {
 				if r != i.String() {
 					// go lock()
 					log.Info().Str("DNSIP", r).Str("ActualIP", i.String()).Msg("New IP address detected. Update")
+					countUpdate.Inc()
 					if err = d.UpdateRecord(i); err != nil {
 						log.Error().Err(err).Msg("Failed to update dns record")
 					}

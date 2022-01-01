@@ -1,0 +1,38 @@
+---
+name: build on release
+
+on:
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
+
+jobs:
+  page:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install mkdocs-material
+
+      - run: mkdocs gh-deploy --force
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get latest release version number
+        id: get_version
+        uses: battila7/get-version-action@v2
+      - name: Set image tag
+        run: |
+          TAG="${{ steps.get_version.outputs.version }}"
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+      - name: create and push an image
+        run: >
+          buildah unshare bash ./build.sh
+          ${{ env.TAG }}
+          ${{ secrets.REGISTRY_USERNAME }}
+          ${{ secrets.REGISTRY_PASSWORD }}

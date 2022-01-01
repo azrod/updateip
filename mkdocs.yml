@@ -1,0 +1,50 @@
+site_name: UpdateIP
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github-alt
+
+nav:
+  - Overview: "index.md"
+  - Getting Started: "getting-started.md"
+  - Setup:
+      - Docker: "setup/docker.md"
+      - Docker Compose: "setup/docker.md"
+      - Source: "setup/source.md"
+      - Config File: "setup/configfile.md"
+      - Env vars: "setup/envvars.md"
+
+  - Providers:
+      - AWS Route 53: "providers/aws.md"
+      - OVH: "providers/ovh.md"
+      - Cloudflare: "providers/cloudflare.md"
+
+  - Advanced:
+      - DNS: "advanced/dns.md"
+
+plugins:
+  - search
+
+markdown_extensions:
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+
+repo_url: https://github.com/azrod/updateip
+repo_name: azrod/updateip
