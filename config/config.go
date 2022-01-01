@@ -243,7 +243,7 @@ func LoadConfig() (config CFG) {
 	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_ZONEID"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_RECORD_ZONEID from environment variables")
 		config.Providers.CLOUDFLAREAccount.Record.ZoneID = os.Getenv("CLOUDFLARE_RECORD_ZONEID")
-		
+	}
 
 	// CLOUDFLARE_RECORD_TTL
 	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_TTL"); ok {

@@ -45,6 +45,9 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 repo_url: https://github.com/azrod/updateip
 repo_name: azrod/updateip
