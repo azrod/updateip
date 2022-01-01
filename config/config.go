@@ -37,22 +37,24 @@ type CFG struct {
 		Level    string `yaml:"level"`
 		Humanize bool   `yaml:"humanize"`
 	}
-	Metrics    CFGMetrics `yaml:"metrics"`
-	AWSAccount struct {
-		Enable bool               `yaml:"enable"`
-		Secret uip_aws.PawsSecret `yaml:"secret"`
-		Record uip_aws.PawsRecord `yaml:"record"`
-	} `yaml:"aws_account"`
-	OVHAccount struct {
-		Enable bool               `yaml:"enable"`
-		Secret uip_ovh.PovhSecret `yaml:"secret"`
-		Record uip_ovh.PovhRecord `yaml:"record"`
-	} `yaml:"ovh_account"`
-	CLOUDFLAREAccount struct {
-		Enable bool                             `yaml:"enable"`
-		Secret uip_cloudflare.PCloudflareSecret `yaml:"secret"`
-		Record uip_cloudflare.PCloudflareRecord `yaml:"record"`
-	} `yaml:"cloudflare_account"`
+	Metrics   CFGMetrics `yaml:"metrics"`
+	Providers struct {
+		AWSAccount struct {
+			Enable bool               `yaml:"enable"`
+			Secret uip_aws.PawsSecret `yaml:"secret"`
+			Record uip_aws.PawsRecord `yaml:"record"`
+		} `yaml:"aws"`
+		OVHAccount struct {
+			Enable bool               `yaml:"enable"`
+			Secret uip_ovh.PovhSecret `yaml:"secret"`
+			Record uip_ovh.PovhRecord `yaml:"record"`
+		} `yaml:"ovh"`
+		CLOUDFLAREAccount struct {
+			Enable bool                             `yaml:"enable"`
+			Secret uip_cloudflare.PCloudflareSecret `yaml:"secret"`
+			Record uip_cloudflare.PCloudflareRecord `yaml:"record"`
+		} `yaml:"cloudflare"`
+	} `yaml:"providers"`
 }
 
 // LoadConfig reads configuration from file or environment variables.
@@ -90,29 +92,39 @@ func LoadConfig() (config CFG) {
 	var ok bool
 
 	// try to read from environment variables
+	// env AWS_ACCOUNT_ENABLE
+	if _, ok = os.LookupEnv("AWS_ACCOUNT_ENABLE"); ok {
+		log.Info().Msg("AWS_ACCOUNT_ENABLE found in environment variables")
+		config.Providers.AWSAccount.Enable, err = strconv.ParseBool(os.Getenv("AWS_ACCOUNT_ENABLE"))
+
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to parse AWS_ACCOUNT_ENABLE")
+		}
+	}
+
 	if _, ok = os.LookupEnv("AWS_ACCESS_KEY_ID"); ok {
 		log.Info().Msg("Reading AWS_ACCESS_KEY_ID from environment variables")
-		config.AWSAccount.Secret.AccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
+		config.Providers.AWSAccount.Secret.AccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
 	}
 
 	if _, ok = os.LookupEnv("AWS_SECRET_ACCESS_KEY"); ok {
 		log.Info().Msg("Reading AWS_SECRET_ACCESS_KEY from environment variables")
-		config.AWSAccount.Secret.SecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+		config.Providers.AWSAccount.Secret.SecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
 	}
 
 	if _, ok = os.LookupEnv("AWS_REGION"); ok {
 		log.Info().Msg("Reading AWS_REGION from environment variables")
-		config.AWSAccount.Secret.Region = os.Getenv("AWS_REGION")
+		config.Providers.AWSAccount.Secret.Region = os.Getenv("AWS_REGION")
 	}
 
 	if _, ok = os.LookupEnv("AWS_HOSTED_ZONE_ID"); ok {
 		log.Info().Msg("Reading AWS_HOSTED_ZONE_ID from environment variables")
-		config.AWSAccount.Record.HostedZoneID = os.Getenv("AWS_HOSTED_ZONE_ID")
+		config.Providers.AWSAccount.Record.HostedZoneID = os.Getenv("AWS_HOSTED_ZONE_ID")
 	}
 
 	if _, ok = os.LookupEnv("AWS_RECORD_NAME"); ok {
 		log.Info().Msg("Reading AWS_RECORD_NAME from environment variables")
-		config.AWSAccount.Record.Name = os.Getenv("AWS_HOSTED_ZONE_NAME")
+		config.Providers.AWSAccount.Record.Name = os.Getenv("AWS_HOSTED_ZONE_NAME")
 	}
 
 	// AWS_RECORD_TTL
@@ -122,44 +134,59 @@ func LoadConfig() (config CFG) {
 		if err != nil {
 			log.Error().Err(err).Str("value", os.Getenv("AWS_RECORD_TTL")).Msg("Failed to convert AWS_RECORD_TTL to int")
 		} else {
-			config.AWSAccount.Record.TTL = ttl
+			config.Providers.AWSAccount.Record.TTL = ttl
 		}
 	}
 
 	// AWS_RECORD_DOMAIN
 	if _, ok = os.LookupEnv("AWS_RECORD_DOMAIN"); ok {
 		log.Info().Msg("Reading AWS_RECORD_DOMAIN from environment variables")
-		config.AWSAccount.Record.Domain = os.Getenv("AWS_RECORD_DOMAIN")
+		config.Providers.AWSAccount.Record.Domain = os.Getenv("AWS_RECORD_DOMAIN")
 	}
 
 	// AWS_RECORD_COMMENT
 	if _, ok = os.LookupEnv("AWS_RECORD_COMMENT"); ok {
 		log.Info().Msg("Reading AWS_RECORD_COMMENT from environment variables")
-		config.AWSAccount.Record.Comment = os.Getenv("AWS_RECORD_COMMENT")
+		config.Providers.AWSAccount.Record.Comment = os.Getenv("AWS_RECORD_COMMENT")
+	}
+
+	// OVH_ACCOUNT_ENABLE
+	if _, ok = os.LookupEnv("OVH_ACCOUNT_ENABLE"); ok {
+		log.Info().Msg("OVH_ACCOUNT_ENABLE found in environment variables")
+		config.Providers.OVHAccount.Enable, err = strconv.ParseBool(os.Getenv("OVH_ACCOUNT_ENABLE"))
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to parse OVH_ACCOUNT_ENABLE")
+		}
 	}
 
 	// OVH_APPLICATION_KEY
 	if _, ok = os.LookupEnv("OVH_APPLICATION_KEY"); ok {
 		log.Info().Msg("Reading OVH_APPLICATION_KEY from environment variables")
-		config.OVHAccount.Secret.ApplicationKey = os.Getenv("OVH_APPLICATION_KEY")
+		config.Providers.OVHAccount.Secret.ApplicationKey = os.Getenv("OVH_APPLICATION_KEY")
 	}
 
 	// OVH_APPLICATION_SECRET
 	if _, ok = os.LookupEnv("OVH_APPLICATION_SECRET"); ok {
 		log.Info().Msg("Reading OVH_APPLICATION_SECRET from environment variables")
-		config.OVHAccount.Secret.ApplicationSecret = os.Getenv("OVH_APPLICATION_SECRET")
+		config.Providers.OVHAccount.Secret.ApplicationSecret = os.Getenv("OVH_APPLICATION_SECRET")
 	}
 
 	// OVH_CONSUMER_KEY
 	if _, ok = os.LookupEnv("OVH_CONSUMER_KEY"); ok {
 		log.Info().Msg("Reading OVH_CONSUMER_KEY from environment variables")
-		config.OVHAccount.Secret.ConsumerKey = os.Getenv("OVH_CONSUMER_KEY")
+		config.Providers.OVHAccount.Secret.ConsumerKey = os.Getenv("OVH_CONSUMER_KEY")
+	}
+
+	// OVH_REGION
+	if _, ok = os.LookupEnv("OVH_REGION"); ok {
+		log.Info().Msg("Reading OVH_REGION from environment variables")
+		config.Providers.OVHAccount.Secret.Region = os.Getenv("OVH_REGION")
 	}
 
 	// OVH_RECORD_NAME
 	if _, ok = os.LookupEnv("OVH_RECORD_NAME"); ok {
 		log.Info().Msg("Reading OVH_RECORD_NAME from environment variables")
-		config.OVHAccount.Record.Name = os.Getenv("OVH_RECORD_NAME")
+		config.Providers.OVHAccount.Record.Name = os.Getenv("OVH_RECORD_NAME")
 	}
 
 	// OVH_RECORD_TTL
@@ -169,33 +196,54 @@ func LoadConfig() (config CFG) {
 		if err != nil {
 			log.Error().Err(err).Str("value", os.Getenv("OVH_RECORD_TTL")).Msg("Failed to convert OVH_RECORD_TTL to int")
 		} else {
-			config.OVHAccount.Record.TTL = ttl
+			config.Providers.OVHAccount.Record.TTL = ttl
 		}
 	}
 
 	// OVH_RECORD_ZONE
 	if _, ok = os.LookupEnv("OVH_RECORD_ZONE"); ok {
 		log.Info().Msg("Reading OVH_RECORD_ZONE from environment variables")
-		config.OVHAccount.Record.Zone = os.Getenv("OVH_RECORD_ZONE")
+		config.Providers.OVHAccount.Record.Zone = os.Getenv("OVH_RECORD_ZONE")
+	}
+
+	// CLOUDFLARE_ACCOUNT_ENABLE
+	if _, ok = os.LookupEnv("CLOUDFLARE_ACCOUNT_ENABLE"); ok {
+		log.Info().Msg("CLOUDFLARE_ACCOUNT_ENABLE found in environment variables")
+		config.Providers.CLOUDFLAREAccount.Enable, err = strconv.ParseBool(os.Getenv("CLOUDFLARE_ACCOUNT_ENABLE"))
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to parse CLOUDFLARE_ACCOUNT_ENABLE")
+		}
 	}
 
 	// CLOUDFLARE_API_KEY
 	if _, ok = os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_API_KEY from environment variables")
-		config.CLOUDFLAREAccount.Secret.APIKey = os.Getenv("CLOUDFLARE_API_KEY")
+		config.Providers.CLOUDFLAREAccount.Secret.APIKey = os.Getenv("CLOUDFLARE_API_KEY")
 	}
 
 	// CLOUDFLARE_EMAIL
 	if _, ok = os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_EMAIL from environment variables")
-		config.CLOUDFLAREAccount.Secret.Email = os.Getenv("CLOUDFLARE_EMAIL")
+		config.Providers.CLOUDFLAREAccount.Secret.Email = os.Getenv("CLOUDFLARE_EMAIL")
 	}
 
 	// CLOUDFLARE_RECORD_NAME
 	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_NAME"); ok {
 		log.Info().Msg("Reading CLOUDFLARE_RECORD_NAME from environment variables")
-		config.CLOUDFLAREAccount.Record.Name = os.Getenv("CLOUDFLARE_RECORD_NAME")
+		config.Providers.CLOUDFLAREAccount.Record.Name = os.Getenv("CLOUDFLARE_RECORD_NAME")
 	}
+
+	// CLOUDFLARE_RECORD_DOMAIN
+	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_DOMAIN"); ok {
+		log.Info().Msg("Reading CLOUDFLARE_RECORD_DOMAIN from environment variables")
+		config.Providers.CLOUDFLAREAccount.Record.Domain = os.Getenv("CLOUDFLARE_RECORD_DOMAIN")
+	}
+
+	// CLOUDFLARE_RECORD_ZONEID
+	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_ZONEID"); ok {
+		log.Info().Msg("Reading CLOUDFLARE_RECORD_ZONEID from environment variables")
+		config.Providers.CLOUDFLAREAccount.Record.ZoneID = os.Getenv("CLOUDFLARE_RECORD_ZONEID")
+		
 
 	// CLOUDFLARE_RECORD_TTL
 	if _, ok = os.LookupEnv("CLOUDFLARE_RECORD_TTL"); ok {
@@ -204,7 +252,7 @@ func LoadConfig() (config CFG) {
 		if err != nil {
 			log.Error().Err(err).Str("value", os.Getenv("CLOUDFLARE_RECORD_TTL")).Msg("Failed to convert CLOUDFLARE_RECORD_TTL to int")
 		} else {
-			config.CLOUDFLAREAccount.Record.TTL = ttl
+			config.Providers.CLOUDFLAREAccount.Record.TTL = ttl
 		}
 	}
 
@@ -236,6 +284,12 @@ func LoadConfig() (config CFG) {
 		} else {
 			config.Metrics.Enable = enable
 		}
+	}
+
+	// METRICS ADDRESS
+	if _, ok = os.LookupEnv("METRICS_HOST"); ok {
+		log.Info().Msg("Reading METRICS_ADDRESS from environment variables")
+		config.Metrics.Host = os.Getenv("METRICS_HOST")
 	}
 
 	// METRICS_PORT
