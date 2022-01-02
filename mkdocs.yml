@@ -49,5 +49,10 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
 
+extra:
+  analytics:
+    provider: google
+    property: G-LNP3KHYKK3
+
 repo_url: https://github.com/azrod/updateip
 repo_name: azrod/updateip
