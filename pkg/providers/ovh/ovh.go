@@ -25,7 +25,7 @@ func (d *Povh) NewClient() (err error) {
 	d.Record.Name = u.Subdomain
 
 	d.Events = make(chan string, 100)
-	d.Loop = *time.NewTicker(5 * time.Second)
+	d.Loop = *time.NewTicker(60 * time.Second)
 
 	return
 }

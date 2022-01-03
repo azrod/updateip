@@ -122,6 +122,9 @@ LOOP:
 	for {
 		select {
 		case sig := <-sigs:
+			if c.Metrics.Enable {
+				(*m.Counters)["eventReceive"].Inc()
+			}
 			log.Info().Msg(sig.String())
 			break LOOP
 		}

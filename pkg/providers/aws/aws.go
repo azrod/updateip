@@ -41,7 +41,7 @@ func (d *Paws) NewClient() error {
 	}
 
 	d.Events = make(chan string, 100)
-	d.Loop = *time.NewTicker(5 * time.Second)
+	d.Loop = *time.NewTicker(60 * time.Second)
 	return err
 }
 
