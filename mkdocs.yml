@@ -35,6 +35,7 @@ nav:
 
   - Advanced:
       - DNS: "advanced/dns.md"
+      - Metrics: "advanced/metrics.md"
 
 plugins:
   - search
