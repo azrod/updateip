@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 
 	uip_aws "github.com/azrod/updateip/pkg/providers/aws"
@@ -76,11 +77,15 @@ func LoadConfig() (config CFG) {
 	}
 
 	// open yaml file
-	f, err := os.Open(dir + "/" + file)
+	f, err := os.Open(filepath.Clean(dir + "/" + file))
 	if err != nil {
 		log.Error().Err(err).Str("path", dir+"/"+file).Msg("Failed to open config file")
 	} else {
-		defer f.Close()
+		defer func() {
+			if err := f.Close(); err != nil {
+				log.Error().Err(err).Msg("Error closing file")
+			}
+		}()
 
 		// read yaml file
 		err = yaml.NewDecoder(f).Decode(&config)
