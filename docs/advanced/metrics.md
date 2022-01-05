@@ -1,6 +1,6 @@
 # Metrics
 
-Different metrics are available. Metrics are organized into different categories. 
+Different metrics are available. Metrics are organized into different categories.
 
 Categories :
 
@@ -31,7 +31,6 @@ metrics:
 ```
 
 ## Env Variables
-
 
 | Options        | Actions                                 |
 | -------------- | --------------------------------------- |
