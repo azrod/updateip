@@ -112,6 +112,14 @@ func main() {
 			m.RegisterPkg(Paws.RegistryMetrics())
 		}
 
+		if c.Providers.CLOUDFLAREAccount.Enable {
+			m.RegisterPkg(PCloudflare.RegistryMetrics())
+		}
+
+		if c.Providers.OVHAccount.Enable {
+			m.RegisterPkg(PCloudflare.RegistryMetrics())
+		}
+
 		m.Run()
 	}
 
@@ -122,9 +130,6 @@ LOOP:
 	for {
 		select {
 		case sig := <-sigs:
-			if c.Metrics.Enable {
-				(*m.Counters)["eventReceive"].Inc()
-			}
 			log.Info().Msg(sig.String())
 			break LOOP
 		}

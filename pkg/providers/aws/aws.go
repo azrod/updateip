@@ -168,7 +168,8 @@ func (d *Paws) Run() error {
 	for {
 		select {
 		case e := <-d.Events:
-			log.Info().Msgf("Event: %s", e)
+			eventReceive.Inc()
+			log.Info().Msgf("Event => %s", e)
 		case <-d.Loop.C:
 
 			if ok, err := d.GetChangeStatus(); ok && err == nil {

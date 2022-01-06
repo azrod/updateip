@@ -13,6 +13,8 @@ import (
 
 // New Client
 func (d *Povh) NewClient() (err error) {
+	defer timeTrackS(time.Now(), "ovh_NewClient")
+
 	d.clients.ovh, err = ovh.NewClient(
 		d.Secret.Region,
 		d.Secret.ApplicationKey,
@@ -32,6 +34,7 @@ func (d *Povh) NewClient() (err error) {
 
 // update record
 func (d *Povh) UpdateRecord(recordID int, ip net.IP) (err error) {
+	defer timeTrackS(time.Now(), "ovh_UpdateRecord")
 	var respData txtRecordResponse
 	reqData := txtRecordRequest{FieldType: "A", Target: ip.String(), TTL: 300}
 
@@ -53,7 +56,7 @@ func (d *Povh) UpdateRecord(recordID int, ip net.IP) (err error) {
 
 // get record ID
 func (d *Povh) GetRecordID() (recordID int, err error) {
-
+	defer timeTrackS(time.Now(), "ovh_GetRecordID")
 	var records []int
 	err = d.clients.ovh.Get(
 		"/domain/zone/"+d.Record.Zone+"/record?fieldType=TXT&subDomain="+d.Record.Name,
@@ -91,7 +94,7 @@ func (d *Povh) GetRecordID() (recordID int, err error) {
 
 // get record with record ID
 func (d *Povh) GetRecord(recordID int) (record string, err error) {
-
+	defer timeTrackS(time.Now(), "ovh_GetRecord")
 	var respData txtRecordResponse
 	err = d.clients.ovh.Get(
 		"/domain/zone/"+d.Record.Zone+"/record/"+fmt.Sprint(recordID),
@@ -108,6 +111,7 @@ func (d *Povh) GetRecord(recordID int) (record string, err error) {
 
 // GetchangeStatus returns the status of the change
 func (d *Povh) GetChangeStatus() (status bool, err error) {
+	defer timeTrackS(time.Now(), "ovh_GetChangeStatus")
 	var respData StatusResponse
 	err = d.clients.ovh.Get("/domain/zone/"+d.Record.Zone+"/status", respData)
 	return respData.IsDeployed, err
@@ -115,6 +119,7 @@ func (d *Povh) GetChangeStatus() (status bool, err error) {
 
 // Refresh Zone Records
 func (d *Povh) RefreshZoneRecords() (err error) {
+	defer timeTrackS(time.Now(), "ovh_RefreshZoneRecords")
 	var respData []int
 	err = d.clients.ovh.Post(
 		"/domain/zone/"+d.Record.Zone+"/refresh",
@@ -150,7 +155,8 @@ func (d *Povh) Run() (err error) {
 	for {
 		select {
 		case e := <-d.Events:
-			log.Info().Msgf("Event: %s", e)
+			eventReceive.Inc()
+			log.Info().Msgf("Event => %s", e)
 		case <-d.Loop.C:
 
 			if ok, err := d.GetChangeStatus(); ok && err == nil {
@@ -172,7 +178,6 @@ func (d *Povh) Run() (err error) {
 				}
 
 				if r != i.String() {
-					// go lock()
 					log.Info().Str("DNSIP", r).Str("ActualIP", i.String()).Msg("New IP address detected. Update")
 					if err = d.UpdateRecord(recordID, i); err != nil {
 						log.Error().Err(err).Msg("Failed to update dns record")

@@ -1,4 +1,4 @@
-package uip_aws
+package uip_ovh
 
 import (
 	"time"
@@ -9,22 +9,22 @@ import (
 var (
 	countUpdate = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: "updateip_aws_update",
-			Help: "Number of ip updated on AWS provider.",
+			Name: "updateip_ovh_update",
+			Help: "Number of ip updated on OVH provider.",
 		},
 	)
 
 	// Status ...
 	providerStatus = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "updateip_aws_status",
-			Help: "AWS Providers status.",
+			Name: "updateip_ovh_status",
+			Help: "cloudflare Providers status.",
 		},
 	)
 
 	// Histo ...
 	funcTime = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Name: "updateip_aws_func_time",
+		Name: "updateip_ovh_func_time",
 		Help: "Time taken to do ...",
 	},
 		[]string{"where"},
@@ -32,16 +32,16 @@ var (
 
 	eventReceive = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: "updateip_aws_event_receive",
-			Help: "Count of events received on AWS Provider.",
+			Name: "updateip_ovh_event_receive",
+			Help: "Count of events received on OVH Provider.",
 		},
 	)
 )
 
-func (d *Paws) RegistryMetrics() map[string][]interface{} {
+func (d *Povh) RegistryMetrics() map[string][]interface{} {
 
 	x := make(map[string][]interface{})
-	x["counter"] = []interface{}{countUpdate, eventReceive}
+	x["counter"] = []interface{}{countUpdate}
 	x["gauge"] = []interface{}{providerStatus}
 	x["gaugeVec"] = []interface{}{funcTime}
 

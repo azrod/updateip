@@ -20,6 +20,8 @@ var (
 
 // Setup new cloudflare client
 func (d *PCloudflare) NewClient() error {
+	defer timeTrackS(time.Now(), "cloudflare_NewClient")
+
 	var err error
 
 	log.Trace().Msg("Creating new Cloudflare client")
@@ -44,6 +46,7 @@ func (d *PCloudflare) NewClient() error {
 
 // Update record with new IP
 func (d *PCloudflare) UpdateRecord(ip net.IP) error {
+	defer timeTrackS(time.Now(), "cloudflare_UpdateRecord")
 	var err error
 
 	ctx := context.Background()
@@ -114,6 +117,8 @@ func (d *PCloudflare) loopCheckApply(ip string) bool {
 // Get record
 func (d *PCloudflare) GetRecord() (record string, err error) {
 
+	defer timeTrackS(time.Now(), "cloudflare_GetRecord")
+
 	log.Trace().Msg("Getting record")
 
 	if rec.Expire.After(time.Now()) || rec.LastValue == "" {
@@ -148,7 +153,8 @@ func (d *PCloudflare) Run() error {
 	for {
 		select {
 		case e := <-d.Events:
-			log.Info().Msgf("Event: => %s", e)
+			eventReceive.Inc()
+			log.Info().Msgf("Event => %s", e)
 		case <-d.Loop.C:
 
 			r, err := d.GetRecord()
@@ -164,7 +170,6 @@ func (d *PCloudflare) Run() error {
 			}
 
 			if r != i.String() {
-				// go lock()
 				log.Info().Str("DNSIP", r).Str("ActualIP", i.String()).Msg("New IP address detected. Update")
 
 				if err = d.UpdateRecord(i); err != nil {
