@@ -21,7 +21,7 @@ You have some options to enable metrics server.
 | metrics.path   | /metrics | :heavy_multiplication_x: | Path for acceding to metrics web server |
 |                |          |                          |                                         |
 
-```yaml title=config.yaml"
+```yaml title="config.yaml"
 metrics:
   enable: true # Default: false
   port: 8080 # Default : 8080
@@ -34,7 +34,6 @@ metrics:
 
 | Options        | Actions                                 |
 | -------------- | --------------------------------------- |
-|                |                                         |
 | METRICS_ENABLE | Define if start metrics web server      |
 | METRICS_HOST   | Set IP address for metrics web server   |
 | METRICS_PORT   | Set port for metrics web server         |
@@ -50,14 +49,20 @@ METRICS_ENABLE=true ./updateip
 
 | Metrics Name                 | Description          |
 | ---------------------------- | -------------------- |
-|                              |                      |
 | updateip_count_event_receive | Total event received |
 
 ### AWS Provider
 
 | Metrics Name           | Description                          |
 | ---------------------- | ------------------------------------ |
-|                        |                                      |
 | updateip_aws_func_time | Execution time of each function      |
 | updateip_aws_status    | Return Status of AWS Provider        |
 | updateip_aws_update    | Number of DNS record validity checks |
+
+### Cloudflare Provider
+
+| Metrics Name                  | Description                          |
+| ----------------------------- | ------------------------------------ |
+| updateip_cloudflare_func_time | Execution time of each function      |
+| updateip_cloudflare_status    | Return Status of Cloudflare Provider |
+| updateip_cloudflare_update    | Number of DNS record validity checks |

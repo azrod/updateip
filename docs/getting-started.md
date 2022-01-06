@@ -18,7 +18,7 @@ docker run -itd \
 
 Create the **config.yaml** configuration file
 
-```yaml
+```yaml title="config.yaml"
 log:
   level: debug # Available : trace debug info warn error fatal panic
   humanize: true # Default: false
@@ -28,4 +28,4 @@ log:
 
 ## Setup your provider
 
-Go to the [provider documentation](providers.md) to setup your provider.
+Go to the [provider documentation](/providers/) to setup your provider.

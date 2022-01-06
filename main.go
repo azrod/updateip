@@ -112,6 +112,10 @@ func main() {
 			m.RegisterPkg(Paws.RegistryMetrics())
 		}
 
+		if c.Providers.CLOUDFLAREAccount.Enable {
+			m.RegisterPkg(PCloudflare.RegistryMetrics())
+		}
+
 		m.Run()
 	}
 
