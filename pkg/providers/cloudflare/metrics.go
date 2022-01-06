@@ -29,6 +29,13 @@ var (
 	},
 		[]string{"where"},
 	)
+
+	eventReceive = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "updateip_cloudflare_event_receive",
+			Help: "Count of events received on Cloudflare.",
+		},
+	)
 )
 
 func (d *PCloudflare) RegistryMetrics() map[string][]interface{} {

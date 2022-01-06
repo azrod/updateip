@@ -153,7 +153,8 @@ func (d *PCloudflare) Run() error {
 	for {
 		select {
 		case e := <-d.Events:
-			log.Info().Msgf("Event: => %s", e)
+			eventReceive.Inc()
+			log.Info().Msgf("Event => %s", e)
 		case <-d.Loop.C:
 
 			r, err := d.GetRecord()
