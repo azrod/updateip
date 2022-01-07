@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"github.com/azrod/updateip/config"
+	"github.com/azrod/updateip/pkg/config"
 	"github.com/azrod/updateip/pkg/metrics"
 	uip_aws "github.com/azrod/updateip/pkg/providers/aws"
 	uip_cloudflare "github.com/azrod/updateip/pkg/providers/cloudflare"
@@ -28,7 +28,10 @@ func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
 	// Load config
-	c := config.LoadConfig()
+	c, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to load config")
+	}
 
 	if c.Log.Humanize {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
@@ -108,6 +111,7 @@ func main() {
 	if c.Metrics.Enable {
 		log.Info().Msg("Starting Metrics Server")
 		m = metrics.Init(c.Metrics)
+
 		if c.Providers.AWSAccount.Enable {
 			m.RegisterPkg(Paws.RegistryMetrics())
 		}
@@ -126,12 +130,10 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-LOOP:
-	for {
-		select {
-		case sig := <-sigs:
-			log.Info().Msg(sig.String())
-			break LOOP
-		}
-	}
+	func() {
+		<-sigs
+		log.Info().Msg("Shutting down")
+		os.Exit(1)
+	}()
+
 }
