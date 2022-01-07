@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/azrod/updateip/config"
+	"github.com/azrod/updateip/pkg/config"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -20,15 +20,6 @@ type Metrics struct {
 	cfg      config.CFGMetrics
 }
 
-var (
-	eventReceive = prometheus.NewCounter(
-		prometheus.CounterOpts{
-			Name: "updateip_count_event_receive",
-			Help: "Count of events received",
-		},
-	)
-)
-
 // NewMetrics returns a new Metrics struct
 func Init(cfg config.CFGMetrics) *Metrics {
 
@@ -36,9 +27,7 @@ func Init(cfg config.CFGMetrics) *Metrics {
 		cfg:      cfg,
 		registry: prometheus.NewRegistry(),
 		Gauges:   &map[string]*prometheus.GaugeVec{},
-		Counters: &map[string]prometheus.Counter{
-			"eventReceive": eventReceive,
-		},
+		Counters: &map[string]prometheus.Counter{},
 	}
 }
 
@@ -49,7 +38,6 @@ func (m *Metrics) Run() {
 }
 
 func (m *Metrics) registerMetrics() {
-	m.registry.MustRegister((*m.Counters)["eventReceive"])
 	m.registry.MustRegister(collectors.NewBuildInfoCollector())
 }
 
