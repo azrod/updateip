@@ -20,6 +20,7 @@ it is possible to change the directory and the configuration file which are call
 | metrics.host                            | 0.0.0.0  | :heavy_multiplication_x: | Set IP address for metrics web server                           |
 | metrics.port                            | 8080     | :heavy_multiplication_x: | Set port for metrics web server                                 |
 | metrics.path                            | /metrics | :heavy_multiplication_x: | Path for acceding to metrics web server                         |
+| metrics.logging                         | false    | :heavy_multiplication_x: | Logging request http endpoint                                   |
 |                                         |          |                          |                                                                 |
 | providers.aws.enable                    | false    | :heavy_multiplication_x: | Enable AWS Route 53 Provider                                    |
 | providers.aws.secret.access_key_id      | ""       | :heavy_check_mark:       | AccessKey for AWS Account                                       |
@@ -54,6 +55,7 @@ metrics:
   port: 8080 # Default : 8080
   host: 0.0.0.0 # Default: 0.0.0.0
   path: /metrics # Default: /metrics
+  logging: true # Default: false
 
 providers:
   aws_account:

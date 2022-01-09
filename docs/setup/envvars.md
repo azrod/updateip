@@ -14,6 +14,7 @@ All parameters can be overloaded by environment variables
 | METRICS_HOST              | Set IP address for metrics web server                           |
 | METRICS_PORT              | Set port for metrics web server                                 |
 | METRICS_PATH              | Path for acceding to metrics web server                         |
+| METRICS_LOGGING           | Logging request http on endpoint                                |
 |                           |                                                                 |
 | AWS_ACCOUNT_ENABLE        | Enable AWS Route 53 Provider                                    |
 | AWS_ACCESS_KEY_ID         | AccessKey for AWS Account                                       |

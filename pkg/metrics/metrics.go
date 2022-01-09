@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/azrod/updateip/config"
+	"github.com/azrod/updateip/pkg/config"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -20,15 +20,6 @@ type Metrics struct {
 	cfg      config.CFGMetrics
 }
 
-var (
-	eventReceive = prometheus.NewCounter(
-		prometheus.CounterOpts{
-			Name: "updateip_count_event_receive",
-			Help: "Count of events received",
-		},
-	)
-)
-
 // NewMetrics returns a new Metrics struct
 func Init(cfg config.CFGMetrics) *Metrics {
 
@@ -36,9 +27,7 @@ func Init(cfg config.CFGMetrics) *Metrics {
 		cfg:      cfg,
 		registry: prometheus.NewRegistry(),
 		Gauges:   &map[string]*prometheus.GaugeVec{},
-		Counters: &map[string]prometheus.Counter{
-			"eventReceive": eventReceive,
-		},
+		Counters: &map[string]prometheus.Counter{},
 	}
 }
 
@@ -49,7 +38,6 @@ func (m *Metrics) Run() {
 }
 
 func (m *Metrics) registerMetrics() {
-	m.registry.MustRegister((*m.Counters)["eventReceive"])
 	m.registry.MustRegister(collectors.NewBuildInfoCollector())
 }
 
@@ -95,7 +83,10 @@ func (m *Metrics) hTTPServer() {
 		Handler:      r, // Pass our instance of gorilla/mux in.
 	}
 
-	r.Use(loggingMiddleware)
+	if m.cfg.Logging {
+		r.Use(loggingMiddleware)
+	}
+
 	r.Handle(m.cfg.Path, promhttp.HandlerFor(m.registry, promhttp.HandlerOpts{})).Methods("GET")
 	log.Debug().Msgf("Metrics server listening on %s:%d", m.cfg.Host, m.cfg.Port)
 	if err := srv.ListenAndServe(); err != nil {
@@ -107,7 +98,7 @@ func (m *Metrics) hTTPServer() {
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Do stuff here
-		log.Debug().Str("Method", r.Method).Str("URL", r.URL.String()).Msg("Request")
+		log.Info().Str("Method", r.Method).Str("URL", r.URL.String()).Msg("Request")
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})
