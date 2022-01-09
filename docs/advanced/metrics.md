@@ -13,13 +13,17 @@ You have some options to enable metrics server.
 
 ### Config File
 
-| Options        | Default  | Required                 | Actions                                 |
-| -------------- | -------- | ------------------------ | --------------------------------------- |
-| metrics.enable | false    | :heavy_multiplication_x: | Define if start metrics web server      |
-| metrics.host   | 0.0.0.0  | :heavy_multiplication_x: | Set IP address for metrics web server   |
-| metrics.port   | 8080     | :heavy_multiplication_x: | Set port for metrics web server         |
-| metrics.path   | /metrics | :heavy_multiplication_x: | Path for acceding to metrics web server |
-|                |          |                          |                                         |
+| Options         | Default  | Required                 | Actions                                 |
+| --------------- | -------- | ------------------------ | --------------------------------------- |
+| metrics.enable  | false    | :heavy_multiplication_x: | Define if start metrics web server      |
+| metrics.host    | 0.0.0.0  | :heavy_multiplication_x: | Set IP address for metrics web server   |
+| metrics.port    | 8080     | :heavy_multiplication_x: | Set port for metrics web server         |
+| metrics.path    | /metrics | :heavy_multiplication_x: | Path for acceding to metrics web server |
+| metrics.logging | false    | :heavy_multiplication_x: | Logging request http endpoint           |
+
+!!! warning "metrics.logging"
+
+    If you enable **metrics.logging**, you will see a lot of logs.
 
 ```yaml title="config.yaml"
 metrics:
@@ -27,17 +31,17 @@ metrics:
   port: 8080 # Default : 8080
   host: 0.0.0.0 # Default: 0.0.0.0
   path: /metrics # Default: /metrics
-
 ```
 
 ## Env Variables
 
-| Options        | Actions                                 |
-| -------------- | --------------------------------------- |
-| METRICS_ENABLE | Define if start metrics web server      |
-| METRICS_HOST   | Set IP address for metrics web server   |
-| METRICS_PORT   | Set port for metrics web server         |
-| METRICS_PATH   | Path for acceding to metrics web server |
+| Options         | Actions                                 |
+| --------------- | --------------------------------------- |
+| METRICS_ENABLE  | Define if start metrics web server      |
+| METRICS_HOST    | Set IP address for metrics web server   |
+| METRICS_PORT    | Set port for metrics web server         |
+| METRICS_PATH    | Path for acceding to metrics web server |
+| METRICS_LOGGING | Logging request http on endpoint        |
 
 ```bash title="exemple"
 METRICS_ENABLE=true ./updateip

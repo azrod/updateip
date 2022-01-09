@@ -83,7 +83,10 @@ func (m *Metrics) hTTPServer() {
 		Handler:      r, // Pass our instance of gorilla/mux in.
 	}
 
-	r.Use(loggingMiddleware)
+	if m.cfg.Logging {
+		r.Use(loggingMiddleware)
+	}
+
 	r.Handle(m.cfg.Path, promhttp.HandlerFor(m.registry, promhttp.HandlerOpts{})).Methods("GET")
 	log.Debug().Msgf("Metrics server listening on %s:%d", m.cfg.Host, m.cfg.Port)
 	if err := srv.ListenAndServe(); err != nil {
@@ -95,7 +98,7 @@ func (m *Metrics) hTTPServer() {
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Do stuff here
-		log.Debug().Str("Method", r.Method).Str("URL", r.URL.String()).Msg("Request")
+		log.Info().Str("Method", r.Method).Str("URL", r.URL.String()).Msg("Request")
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})

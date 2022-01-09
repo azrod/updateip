@@ -24,6 +24,8 @@ type CFGMetrics struct {
 	Port int `yaml:"port"`
 	// Path is the path used for the metrics server.
 	Path string `yaml:"path"`
+	// Enable logging of metrics.
+	Logging bool `yaml:"logging"`
 }
 
 type CFG struct {
@@ -329,6 +331,18 @@ func (c CFG) readEnvVars() {
 	if _, ok = os.LookupEnv("METRICS_PATH"); ok {
 		log.Info().Msg("Reading METRICS_PATH from environment variables")
 		c.Metrics.Path = os.Getenv("METRICS_PATH")
+	}
+
+	// METRICS_LOGGING
+	if _, ok = os.LookupEnv("METRICS_LOGGING"); ok {
+		log.Info().Msg("Reading METRICS_LOGGING from environment variables")
+		// convert string to bool
+		logging, err := strconv.ParseBool(os.Getenv("METRICS_LOGGING"))
+		if err != nil {
+			log.Error().Err(err).Str("value", os.Getenv("METRICS_LOGGING")).Msg("Failed to convert METRICS_LOGGING to bool")
+		} else {
+			c.Metrics.Logging = logging
+		}
 	}
 
 }
