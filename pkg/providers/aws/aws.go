@@ -1,6 +1,7 @@
 package uip_aws
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -74,8 +75,13 @@ func (d *Paws) UpdateRecord(ip net.IP) error {
 	if err != nil {
 		return err
 	}
-	d.Events <- "Update Record : IN PROGRESS"
-	rec.LastChangeID = *resp.ChangeInfo.Id
+
+	if *resp.ChangeInfo.Id != "" {
+		rec.LastChangeID = *resp.ChangeInfo.Id
+		d.Events <- "Update Record (ChangeID : " + rec.LastChangeID + ") : IN PROGRESS"
+	} else {
+		return errors.New("no ChangeID")
+	}
 
 	return nil
 }
@@ -110,6 +116,8 @@ func (d *Paws) GetRecord() (record string, err error) {
 
 	if rec.Expire.After(time.Now()) || rec.LastValue == "" {
 
+		log.Trace().Str("LastValue", rec.LastValue).Time("Now", time.Now()).Time("Expire", rec.Expire).Msg("GetRecord is expired or empty")
+
 		var resp *route53.ListResourceRecordSetsOutput
 
 		listParams := &route53.ListResourceRecordSetsInput{
@@ -123,6 +131,8 @@ func (d *Paws) GetRecord() (record string, err error) {
 		rec.Expire = time.Now().Add(10 * time.Minute)
 		rec.LastValue = *resp.ResourceRecordSets[0].ResourceRecords[0].Value
 
+	} else {
+		log.Trace().Str("LastValue", rec.LastValue).Time("Now", time.Now()).Time("Expire", rec.Expire).Msg("GetRecord is not expired")
 	}
 
 	return rec.LastValue, nil
@@ -145,11 +155,11 @@ func (d *Paws) GetChangeStatus() (terminated bool, err error) {
 		}
 
 		if *resp.ChangeInfo.Status == "INSYNC" {
-			d.Events <- "Update Record : Done"
+			d.Events <- "Update Record (ChangeID : " + rec.LastChangeID + ") : Done"
 			rec.LastChangeID = ""
 			return true, nil
 		} else if *resp.ChangeInfo.Status == "PENDING" {
-			d.Events <- "Update Record : Pending"
+			d.Events <- "Update Record (ChangeID : " + rec.LastChangeID + ") : Pending"
 			return false, nil
 		} else {
 			return false, nil
@@ -187,7 +197,7 @@ func (d *Paws) Run() error {
 
 				if r != i.String() {
 					// go lock()
-					log.Info().Str("DNSIP", r).Str("ActualIP", i.String()).Msg("New IP address detected. Update")
+					log.Info().Str("Record", d.Record.Name).Str("DNSIP", r).Str("ActualIP", i.String()).Msg("New IP address detected. Update")
 					countUpdate.Inc()
 					if err = d.UpdateRecord(i); err != nil {
 						log.Error().Err(err).Msg("Failed to update dns record")
