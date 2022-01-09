@@ -66,7 +66,7 @@ func LoadConfig() (config CFG, err error) {
 	fp := config.getConfigFileStruct()
 
 	// open yaml file
-	f, err := os.Open(fp)
+	f, err := os.Open(filepath.Clean(fp))
 	if err != nil {
 		log.Error().Err(err).Str("path", fp).Msg("Failed to open config file")
 	} else {
