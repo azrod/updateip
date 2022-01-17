@@ -84,6 +84,7 @@ func (m *Metrics) hTTPServer() {
 	}
 
 	if m.cfg.Logging {
+		log.Warn().Msg("Logging metrics enabled. This is not recommended for production.")
 		r.Use(loggingMiddleware)
 	}
 

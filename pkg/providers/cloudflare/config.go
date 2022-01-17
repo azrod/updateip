@@ -18,25 +18,25 @@ type PCloudflare struct {
 
 type PCloudflareSecret struct {
 	//APIkey
-	APIKey string `yaml:"api_key"`
+	APIKey string `yaml:"api_key" env:"CLOUDFLARE_API_KEY"`
 
 	//Email
-	Email string `yaml:"email"`
+	Email string `yaml:"email" env:"CLOUDFLARE_EMAIL"`
 }
 
 // PCloudflareRecord
 type PCloudflareRecord struct {
 	// The DNS record to update
-	Name string `yaml:"name"`
+	Name string `yaml:"name" env:"CLOUDFLARE_RECORD_NAME"`
 
 	// TTL of the record
-	TTL int `yaml:"ttl"`
+	TTL int `yaml:"ttl" env:"CLOUDFLARE_RECORD_TTL"`
 
 	//Domain name of the record
-	Domain string `yaml:"domain"`
+	Domain string `yaml:"domain" env:"CLOUDFLARE_RECORD_DOMAIN"`
 
 	//Zone ID of the record
-	ZoneID string `yaml:"zone_id,omitempty"`
+	ZoneID string `yaml:"zone_id,omitempty" env:"CLOUDFLARE_ZONE_ID"`
 }
 
 type record struct {
