@@ -18,22 +18,22 @@ type Povh struct {
 
 type PovhSecret struct {
 	// Application key to access the API
-	ApplicationKey string `yaml:"application_key"`
+	ApplicationKey string `yaml:"application_key" env:"OVH_APPLICATION_KEY"`
 	// Application Secret to access the API
-	ApplicationSecret string `yaml:"application_secret"`
+	ApplicationSecret string `yaml:"application_secret" env:"OVH_APPLICATION_SECRET"`
 	// Region
-	Region string `yaml:"region"`
+	Region string `yaml:"region" env:"OVH_REGION"`
 	//Consumer key
-	ConsumerKey string `yaml:"consumer_key"`
+	ConsumerKey string `yaml:"consumer_key" env:"OVH_CONSUMER_KEY"`
 }
 
 type PovhRecord struct {
 	// The DNS record to update
-	Name string `yaml:"name"`
+	Name string `yaml:"name" env:"OVH_RECORD_NAME"`
 	// TTL of the record
-	TTL int `yaml:"ttl"`
+	TTL int `yaml:"ttl" env:"OVH_RECORD_TTL"`
 	//Zone of the record
-	Zone string `yaml:"zone"`
+	Zone string `yaml:"zone" env:"OVH_RECORD_ZONE"`
 }
 
 // txtRecordRequest represents the request body to DO's API to make a TXT record

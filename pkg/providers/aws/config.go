@@ -20,24 +20,24 @@ type Paws struct {
 
 type PawsSecret struct {
 	//Access key ID
-	AccessKeyID string `yaml:"access_key_id" `
+	AccessKeyID string `yaml:"access_key_id" env:"AWS_ACCESS_KEY_ID"`
 	//Secret access key
-	SecretAccessKey string `yaml:"secret_access_key"`
+	SecretAccessKey string `yaml:"secret_access_key" env:"AWS_SECRET_ACCESS_KEY"`
 	// Region
-	Region string `yaml:"region"`
+	Region string `yaml:"region" env:"AWS_REGION"`
 }
 
 type PawsRecord struct {
 	// The DNS record to update
-	Name string `yaml:"name"`
+	Name string `yaml:"name" env:"AWS_RECORD_NAME"`
 	// TTL of the record
-	TTL int `yaml:"ttl"`
+	TTL int `yaml:"ttl" env:"AWS_RECORD_TTL"`
 	//Domain name of the record
-	Domain string `yaml:"domain"`
+	Domain string `yaml:"domain" env:"AWS_RECORD_DOMAIN"`
 	//Hosted zone ID of the record
-	HostedZoneID string `yaml:"hosted_zone_id,omitempty"`
+	HostedZoneID string `yaml:"hosted_zone_id,omitempty" env:"AWS_HOSTED_ZONE_ID"`
 	//Comment for updated record
-	Comment string `yaml:"comment"`
+	Comment string `yaml:"comment" env:"AWS_RECORD_COMMENT"`
 }
 
 type record struct {

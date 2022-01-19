@@ -114,7 +114,7 @@ func (d *Paws) getHostedZoneID() (HostedZoneID string, err error) {
 func (d *Paws) GetRecord() (record string, err error) {
 	defer timeTrackS(time.Now(), "aws_GetRecord")
 
-	if rec.Expire.After(time.Now()) || rec.LastValue == "" {
+	if time.Now().After(rec.Expire) || rec.LastValue == "" {
 
 		log.Trace().Str("LastValue", rec.LastValue).Time("Now", time.Now()).Time("Expire", rec.Expire).Msg("GetRecord is expired or empty")
 

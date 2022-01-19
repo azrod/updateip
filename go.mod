@@ -3,12 +3,13 @@ module github.com/azrod/updateip
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.42.28
-	github.com/cloudflare/cloudflare-go v0.29.0
+	github.com/aws/aws-sdk-go v1.42.36
+	github.com/caarlos0/env/v6 v6.9.1
+	github.com/cloudflare/cloudflare-go v0.30.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jpillora/go-tld v1.1.1
 	github.com/ovh/go-ovh v1.1.0
-	github.com/prometheus/client_golang v1.11.0
+	github.com/prometheus/client_golang v1.12.0
 	github.com/rs/zerolog v1.26.1
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -25,7 +26,7 @@ require (
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
