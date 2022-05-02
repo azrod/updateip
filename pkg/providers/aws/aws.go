@@ -12,9 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/route53"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/azrod/updateip/pkg/ip"
+	"github.com/rs/zerolog/log"
 )
 
 var (
