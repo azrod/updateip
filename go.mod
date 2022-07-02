@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jpillora/go-tld v1.1.1
 	github.com/ovh/go-ovh v1.1.0
-	github.com/prometheus/client_golang v1.12.1
+	github.com/prometheus/client_golang v1.12.2
 	github.com/rs/zerolog v1.26.1
 	gopkg.in/yaml.v2 v2.4.0
 )
