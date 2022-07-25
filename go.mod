@@ -7,7 +7,7 @@ require (
 	github.com/caarlos0/env/v6 v6.9.1
 	github.com/cloudflare/cloudflare-go v0.43.0
 	github.com/gorilla/mux v1.8.0
-	github.com/jpillora/go-tld v1.1.1
+	github.com/jpillora/go-tld v1.2.1
 	github.com/ovh/go-ovh v1.1.0
 	github.com/prometheus/client_golang v1.12.2
 	github.com/rs/zerolog v1.27.0
