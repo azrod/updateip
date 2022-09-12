@@ -3,7 +3,7 @@ module github.com/azrod/updateip
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go v1.44.47
+	github.com/aws/aws-sdk-go v1.44.95
 	github.com/caarlos0/env/v6 v6.9.1
 	github.com/cloudflare/cloudflare-go v0.43.0
 	github.com/gorilla/mux v1.8.0
