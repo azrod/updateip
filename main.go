@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -14,6 +13,10 @@ import (
 	uip_aws "github.com/azrod/updateip/pkg/providers/aws"
 	uip_cloudflare "github.com/azrod/updateip/pkg/providers/cloudflare"
 	uip_ovh "github.com/azrod/updateip/pkg/providers/ovh"
+	"github.com/azrod/zr"
+	"github.com/azrod/zr/pkg/format"
+	hr "github.com/azrod/zr/pkg/hotreload"
+	"github.com/azrod/zr/pkg/level"
 )
 
 var (
@@ -33,22 +36,25 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to load config")
 	}
 
-	if c.Log.Humanize {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
-	} else {
-		log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
+	logLevel, err := level.ParseLogLevel(c.Log.Level)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to parse log level")
 	}
 
-	// Parse loglevel
-	if c.Log.Level == "" {
-		c.Log.Level = "info"
-	}
-	if l, err := zerolog.ParseLevel(c.Log.Level); err != nil {
-		log.Fatal().Err(err).Msg("cannot parse log level")
+	var logFormat format.LogFormat
+	if c.Log.Humanize {
+		logFormat = format.LogFormatHuman
 	} else {
-		zerolog.SetGlobalLevel(l)
-		log.Info().Msgf("Log level set to %s", l.String())
+		logFormat = format.LogFormatJson
 	}
+
+	zr.Setup(
+		zr.Level(logLevel),
+		zr.Format(logFormat),
+		zr.WithCustomHotReload(
+			hr.WithNoHotReload(),
+		),
+	)
 
 	log.Info().Msg("Starting UpdateIP")
 
