@@ -5,7 +5,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"github.com/azrod/updateip/pkg/config"
@@ -27,8 +26,6 @@ var (
 )
 
 func main() {
-
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
 	// Load config
 	c, err := config.LoadConfig()

@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-sdk-go v1.44.108
-	github.com/azrod/zr v0.0.4-0.20220928125828-dbe64448a6bd
+	github.com/azrod/zr v0.0.4-0.20221004194132-788812fb08dc
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/cloudflare/cloudflare-go v0.51.0
 	github.com/gorilla/mux v1.8.0
