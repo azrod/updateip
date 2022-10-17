@@ -41,8 +41,6 @@ github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk5
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/aws/aws-sdk-go v1.44.108 h1:L8N9GmP9UYDNqBtJO6OC4zSuEkQxAR770VkbRXAUmRk=
 github.com/aws/aws-sdk-go v1.44.108/go.mod h1:y4AeaBuwd2Lk+GepC1E9v0qOiTws0MIWAX4oIKwKHZo=
-github.com/azrod/zr v0.0.4-0.20220928125828-dbe64448a6bd h1:a1rCEdSTgRGk/IgK0QZ3vgQXj3y7R8X1Y3IF7XQq7co=
-github.com/azrod/zr v0.0.4-0.20220928125828-dbe64448a6bd/go.mod h1:8rlBUb7YuOFYIHDoIeBRvAjcKEMMJQAedt+Amhd/Tjg=
 github.com/azrod/zr v0.0.4-0.20221004194132-788812fb08dc h1:zzK1RMmP/Gr9t8r77MUj88iyAV3EUN+iDK/esz7jJTU=
 github.com/azrod/zr v0.0.4-0.20221004194132-788812fb08dc/go.mod h1:q6DKqsy5uMsVdjPAywH7YWQNoz20RQgSc9HvrDQtfXw=
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
@@ -60,8 +58,8 @@ github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWR
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cloudflare/cloudflare-go v0.51.0 h1:ZLDg3hNZ42sJahO3kdcy7NtXAlSS//pmly921jAbZ2o=
-github.com/cloudflare/cloudflare-go v0.51.0/go.mod h1:4+j2gGo6xyrFiYmpa2y4mNzu7pPPN42kyv1b2EqiZGQ=
+github.com/cloudflare/cloudflare-go v0.52.0 h1:9pa170sl8HBR2c/7I5konGwgDYzlQ4dy3evdG/my9xU=
+github.com/cloudflare/cloudflare-go v0.52.0/go.mod h1:JSdZSD4FjF220O9REnYf0IGx7gUdbWwRgCAv4TusaJc=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
 github.com/cncf/xds/go v0.0.0-20210805033703-aa0b78936158/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
