@@ -3,7 +3,7 @@ module github.com/azrod/updateip
 go 1.19
 
 require (
-	github.com/aws/aws-sdk-go v1.44.108
+	github.com/aws/aws-sdk-go v1.44.180
 	github.com/azrod/zr v0.0.4-0.20221004194132-788812fb08dc
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/cloudflare/cloudflare-go v0.51.0
@@ -43,9 +43,9 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
-	golang.org/x/net v0.0.0-20220927171203-f486391704dc // indirect
-	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220922220347-f3bd1da661af // indirect
 	google.golang.org/genproto v0.0.0-20220929141241-1ce7b20da813 // indirect
 	google.golang.org/grpc v1.49.0 // indirect
