@@ -6,13 +6,13 @@ require (
 	github.com/aws/aws-sdk-go v1.44.108
 	github.com/azrod/zr v0.0.4-0.20221004194132-788812fb08dc
 	github.com/caarlos0/env/v6 v6.10.1
-	github.com/cloudflare/cloudflare-go v0.51.0
+	github.com/cloudflare/cloudflare-go v0.60.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jpillora/go-tld v1.2.1
 	github.com/ovh/go-ovh v1.3.0
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/zerolog v1.28.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -26,13 +26,12 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
